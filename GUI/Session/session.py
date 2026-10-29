@@ -403,10 +403,9 @@ class Session:
                 region_addr = utils.safe_str_to_int(region[region_index], 16)
                 new_addr = offset_int + region_addr
                 
-            # Address recalculation could not be done with region + offset
+            # Address recalculation could not be done with region + offset, use symbol
             if new_addr == 0 or new_addr == addr and utils.compliant_identifier(symbol):
-                value, new_addr, symbol = debugcore.examine_expression(symbol)
-                new_addr = utils.safe_str_to_int(new_addr, 16)
+                new_addr = utils.safe_str_to_int(debugcore.examine_expression(symbol).address, 16)
                 new_bookmarks[new_addr] = {
                     "symbol": symbol,
                     "comment": comment,

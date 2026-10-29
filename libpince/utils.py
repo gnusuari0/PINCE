@@ -1258,9 +1258,9 @@ def safe_int_cast(input: Any) -> int:
 
 
 def compliant_identifier(symbol: str) -> bool:
-    # Accept valid C language symbol plus offset digits
-    matches = re.search("[^[:alnum:]_+]", symbol)
+    # Accept valid GAS and MASM language symbol plus (+) offset digits
+    matches = re.search("[0-9A-Za-z_+.$?@!]+", symbol)
     if matches is None:
-        return True
-    else:
         return False
+    else:
+        return True
