@@ -399,17 +399,21 @@ class Session:
                     f"Region '{region_name}' now has {len(region)} mapping(s). " f"Bookmark expected index {region_index}, dropping it..."
                 )
             else:
-                new_addr = utils.safe_str_to_int(region[region_index], 16) + utils.safe_str_to_int(offset, 16)
-            if new_addr == 0:
+                offset_int = utils.safe_str_to_int(offset, 16)
+                region_addr = utils.safe_str_to_int(region[region_index], 16)
+                new_addr = offset_int + region_addr
+                
+            # Address recalculation could not be done with region + offset
+            if new_addr == 0 or new_addr == addr and utils.compliant_identifier(symbol):
                 value, new_addr, symbol = debugcore.examine_expression(symbol)
-
-            if new_addr is not None:
+                new_addr = utils.safe_str_to_int(new_addr, 16)
                 new_bookmarks[new_addr] = {
                     "symbol": symbol,
                     "comment": comment,
                     "address_region_details": address_region_details,
                 }
-
+            else:
+                utils.logger.warning(f"Address recalculation could not be performed for region {region_name} nor its counterpart symbol {symbol}")
         self.pct_bookmarks = new_bookmarks
 
 

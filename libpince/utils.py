@@ -1255,3 +1255,12 @@ def safe_int_cast(input: Any) -> int:
     except TypeError:
         logger.error(f"TypeError: Tried to convert input '{input}' for caller '{sys._getframe().f_back.f_code.co_qualname}'")
         return 0
+
+
+def compliant_identifier(symbol: str) -> bool:
+    # Accept valid C language symbol plus offset digits
+    matches = re.search("[^[:alnum:]_+]", symbol)
+    if matches is None:
+        return True
+    else:
+        return False
