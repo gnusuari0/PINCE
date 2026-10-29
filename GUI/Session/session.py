@@ -403,11 +403,12 @@ class Session:
             if new_addr == 0:
                 value, new_addr, symbol = debugcore.examine_expression(symbol)
 
-            new_bookmarks[new_addr] = {
-                "symbol": symbol,
-                "comment": comment,
-                "address_region_details": address_region_details,
-            }
+            if new_addr is not None:
+                new_bookmarks[new_addr] = {
+                    "symbol": symbol,
+                    "comment": comment,
+                    "address_region_details": address_region_details,
+                }
 
         self.pct_bookmarks = new_bookmarks
 
