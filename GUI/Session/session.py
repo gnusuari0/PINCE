@@ -394,15 +394,14 @@ class Session:
             region = region_dict.get(region_name, None)
             if region is None:
                 utils.logger.warning(f"Could not find region with name: {region_name}")
-                continue
-            if region_index < 0 or region_index >= len(region):
+            elif region_index < 0 or region_index >= len(region):
                 utils.logger.warning(
                     f"Region '{region_name}' now has {len(region)} mapping(s). " f"Bookmark expected index {region_index}, dropping it..."
                 )
-                continue
-            new_addr = utils.safe_str_to_int(region[region_index], 16) + utils.safe_str_to_int(offset, 16)
+            else:
+                new_addr = utils.safe_str_to_int(region[region_index], 16) + utils.safe_str_to_int(offset, 16)
             if new_addr == 0:
-                continue
+                value, new_addr, symbol = debugcore.examine_expression(symbol)
 
             new_bookmarks[new_addr] = {
                 "symbol": symbol,
