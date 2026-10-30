@@ -404,14 +404,29 @@ class Session:
                 new_addr = offset_int + region_addr
                 
             # Address recalculation could not be done with region + offset, use symbol
+            err = False
             if new_addr == 0 or new_addr == addr and utils.compliant_identifier(symbol):
-                new_addr = utils.safe_str_to_int(debugcore.examine_expression(symbol).address, 16)
-                new_bookmarks[new_addr] = {
-                    "symbol": symbol,
-                    "comment": comment,
-                    "address_region_details": address_region_details,
-                }
+                query = symbol.split("+")
+                # Quote symbol name
+                if len(query) == 1:
+                    query = "'" + query[0] + "'"
+                elif len(query) == 2:
+                    query = "'" + query[0] + "'+" + query[1]
+                else:
+                    err = True
+                new_addr = utils.safe_str_to_int(debugcore.examine_expression(query).address, 16)
+                if new_addr is not None and not err:
+                    new_bookmarks[new_addr] = {
+                        "symbol": symbol,
+                        "comment": comment,
+                        "address_region_details": address_region_details,
+                    }
+                else:
+                    err = True
             else:
+                err = True
+
+            if err:
                 utils.logger.warning(f"Address recalculation could not be performed for region {region_name} nor its counterpart symbol {symbol}")
         self.pct_bookmarks = new_bookmarks
 
